@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ฟอร์มจองตั๋วกิจกรรม</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-container {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Kanit', sans-serif;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2d3436;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45, 52, 54, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-control.error {
+            border-color: #e74c3c;
+            background: #fdf2f2;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ticket-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .ticket-option {
+            position: relative;
+        }
+
+        .ticket-option input[type="radio"] {
+            display: none;
+        }
+
+        .ticket-label {
+            display: block;
+            padding: 15px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            font-weight: 500;
+        }
+
+        .ticket-option input[type="radio"]:checked + .ticket-label {
+            border-color: #2d3436;
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 52, 54, 0.3);
+        }
+
+        .ticket-label:hover {
+            border-color: #2d3436;
+            transform: translateY(-2px);
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .quantity-btn {
+            width: 45px;
+            height: 45px;
+            border: 2px solid #2d3436;
+            background: white;
+            color: #2d3436;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-btn:hover {
+            background: #2d3436;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quantity-display {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            min-width: 50px;
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            font-family: 'Kanit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(45, 52, 54, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .ticket-types {
+                grid-template-columns: 1fr;
+            }
+
+            .quantity-control {
+                justify-content: center;
+            }
+        }
+
+        /* Success Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .success-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: scale(0.7) translateY(50px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-overlay.show .success-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .success-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2.5rem;
+            color: white;
+            animation: successPulse 0.6s ease;
+        }
+
+        @keyframes successPulse {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3436;
+            margin-bottom: 15px;
+        }
+
+        .success-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #2d3436;
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 2px solid #2d3436;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .modal-close-btn {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: 'Kanit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .modal-close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 52, 54, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> ฟอร์มจองตั๋วกิจกรรม</h1>
+            <p>กรอกข้อมูลเพื่อจองตั๋วเข้าร่วมกิจกรรม</p>
+        </div>
+
+        <div class="form-container">
+            <form id="bookingForm">
+                 ชื่อ-นามสกุล 
+                <div class="form-group">
+                    <label for="fullName">ชื่อ-นามสกุล <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="fullName" class="form-control" 
+                           placeholder="กรุณากรอกชื่อและนามสกุล">
+                    <div class="error-message" id="fullNameError"></div>
+                </div>
+
+                 เบอร์โทรศัพท์ 
+                <div class="form-group">
+                    <label for="phone">เบอร์โทรศัพท์ <span class="required">*</span></label>
+                    <input type="tel" id="phone" name="phone" class="form-control" 
+                           placeholder="0xxxxxxxxx (10 หลัก)">
+                    <div class="error-message" id="phoneError"></div>
+                </div>
+
+                 ประเภทตั๋ว 
+                <div class="form-group">
+                    <label>ประเภทตั๋ว <span class="required">*</span></label>
+                    <div class="ticket-types">
+                        <div class="ticket-option">
+                            <input type="radio" id="normal" name="ticketType" value="ปกติ" checked>
+                            <label for="normal" class="ticket-label">
+                                 ปกติ<br>
+                                <small>500 บาท</small>
+                            </label>
+                        </div>
+                        <div class="ticket-option">
+                            <input type="radio" id="vip" name="ticketType" value="VIP">
+                            <label for="vip" class="ticket-label">
+                                 VIP<br>
+                                <small>1,500 บาท</small>
+                            </label>
+                        </div>
+                        <div class="ticket-option">
+                            <input type="radio" id="premium" name="ticketType" value="Premium">
+                            <label for="premium" class="ticket-label">
+                                💎 Premium<br>
+                                <small>2,500 บาท</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                 จำนวนตั๋ว 
+                <div class="form-group">
+                    <label>จำนวนตั๋ว <span class="required">*</span></label>
+                    <div class="quantity-control">
+                        <button type="button" class="quantity-btn" id="decreaseBtn">−</button>
+                        <div class="quantity-display" id="quantityDisplay">1</div>
+                        <button type="button" class="quantity-btn" id="increaseBtn">+</button>
+                    </div>
+                    <div class="error-message" id="quantityError"></div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                     จองตั๋วเลย
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="success-modal">
+            <div class="success-icon">✓</div>
+            <h2 class="success-title">จองตั๋วสำเร็จ!</h2>
+            <div class="success-details" id="successDetails">
+                <!-- Details will be populated by JavaScript -->
+            </div>
+            <button class="modal-close-btn" onclick="closeSuccessModal()">
+                เรียบร้อย
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ตัวแปรสำหรับเก็บข้อมูล
+        let currentQuantity = 1;
+        const ticketPrices = {
+            'ปกติ': 500,
+            'VIP': 1500,
+            'Premium': 2500
+        };
+
+        // Elements
+        const form = document.getElementById('bookingForm');
+        const quantityDisplay = document.getElementById('quantityDisplay');
+        const decreaseBtn = document.getElementById('decreaseBtn');
+        const increaseBtn = document.getElementById('increaseBtn');
+
+        // Event Listeners
+        form.addEventListener('submit', handleSubmit);
+        decreaseBtn.addEventListener('click', decreaseQuantity);
+        increaseBtn.addEventListener('click', increaseQuantity);
+
+        // เพิ่ม event listener สำหรับ ticket type
+        document.querySelectorAll('input[name="ticketType"]').forEach(radio => {
+            radio.addEventListener('change', updateQuantityLimits);
+        });
+
+        // Real-time validation
+        document.getElementById('fullName').addEventListener('input', validateFullName);
+        document.getElementById('phone').addEventListener('input', validatePhone);
+
+        // ฟังก์ชันจัดการจำนวนตั๋ว
+        function decreaseQuantity() {
+            if (currentQuantity > 1) {
+                currentQuantity--;
+                updateQuantityDisplay();
+            }
+        }
+
+        function increaseQuantity() {
+            const selectedType = document.querySelector('input[name="ticketType"]:checked').value;
+            const maxLimit = (selectedType === 'VIP' || selectedType === 'Premium') ? 2 : 5;
+            
+            if (currentQuantity < maxLimit) {
+                currentQuantity++;
+                updateQuantityDisplay();
+            }
+        }
+
+        function updateQuantityDisplay() {
+            quantityDisplay.textContent = currentQuantity;
+            
+            // Update button states
+            decreaseBtn.disabled = currentQuantity <= 1;
+            
+            const selectedType = document.querySelector('input[name="ticketType"]:checked').value;
+            const maxLimit = (selectedType === 'VIP' || selectedType === 'Premium') ? 2 : 5;
+            increaseBtn.disabled = currentQuantity >= maxLimit;
+        }
+
+        function updateQuantityLimits() {
+            const selectedType = document.querySelector('input[name="ticketType"]:checked').value;
+            const maxLimit = (selectedType === 'VIP' || selectedType === 'Premium') ? 2 : 5;
+            
+            if (currentQuantity > maxLimit) {
+                currentQuantity = maxLimit;
+                updateQuantityDisplay();
+            }
+            
+            updateQuantityDisplay();
+            clearError('quantity');
+        }
+
+        // ฟังก์ชัน Validation
+        function validateFullName() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const words = fullName.split(/\s+/).filter(word => word.length > 0);
+            
+            if (words.length < 2) {
+                showError('fullName', 'กรุณากรอกชื่อและนามสกุล (อย่างน้อย 2 คำ)');
+                return false;
+            }
+            
+            clearError('fullName');
+            return true;
+        }
+
+        function validatePhone() {
+            const phone = document.getElementById('phone').value.trim();
+            const phonePattern = /^0\d{9}$/;
+            
+            if (!phonePattern.test(phone)) {
+                showError('phone', 'กรุณากรอกเบอร์โทรศัพท์ 10 หลัก ขึ้นต้นด้วย 0');
+                return false;
+            }
+            
+            clearError('phone');
+            return true;
+        }
+
+        function validateQuantity() {
+            const selectedType = document.querySelector('input[name="ticketType"]:checked').value;
+            const maxLimit = (selectedType === 'VIP' || selectedType === 'Premium') ? 2 : 5;
+            
+            if (currentQuantity < 1 || currentQuantity > 5) {
+                showError('quantity', 'จำนวนตั๋วต้องอยู่ระหว่าง 1-5 ใบ');
+                return false;
+            }
+            
+            if ((selectedType === 'VIP' || selectedType === 'Premium') && currentQuantity > 2) {
+                showError('quantity', `ตั๋ว ${selectedType} จำกัดไม่เกิน 2 ใบ`);
+                return false;
+            }
+            
+            clearError('quantity');
+            return true;
+        }
+
+        // ฟังก์ชันแสดง/ซ่อน Error
+        function showError(fieldName, message) {
+            const field = document.getElementById(fieldName);
+            const errorElement = document.getElementById(fieldName + 'Error');
+            
+            field.classList.add('error');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+
+        function clearError(fieldName) {
+            const field = document.getElementById(fieldName);
+            const errorElement = document.getElementById(fieldName + 'Error');
+            
+            if (field) field.classList.remove('error');
+            if (errorElement) {
+                errorElement.classList.remove('show');
+                errorElement.textContent = '';
+            }
+        }
+
+        // ฟังก์ชันจัดการ Submit
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            // Clear all errors
+            clearError('fullName');
+            clearError('phone');
+            clearError('quantity');
+            
+            // Validate all fields
+            const isFullNameValid = validateFullName();
+            const isPhoneValid = validatePhone();
+            const isQuantityValid = validateQuantity();
+            
+            if (isFullNameValid && isPhoneValid && isQuantityValid) {
+                const fullName = document.getElementById('fullName').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const selectedType = document.querySelector('input[name="ticketType"]:checked').value;
+                const price = ticketPrices[selectedType];
+                const totalPrice = price * currentQuantity;
+                
+                showSuccessModal(fullName, phone, selectedType, currentQuantity, totalPrice);
+                
+                form.reset();
+                currentQuantity = 1;
+                updateQuantityDisplay();
+                
+                // Reset ticket type to default
+                document.getElementById('normal').checked = true;
+                document.querySelectorAll('.ticket-label').forEach(label => {
+                    label.style.borderColor = '#e1e8ed';
+                    label.style.background = '#f8f9fa';
+                    label.style.color = '#333';
+                    label.style.transform = 'none';
+                    label.style.boxShadow = 'none';
+                });
+                document.querySelector('label[for="normal"]').style.borderColor = '#2d3436';
+                document.querySelector('label[for="normal"]').style.background = 'linear-gradient(135deg, #2d3436 0%, #636e72 100%)';
+                document.querySelector('label[for="normal"]').style.color = 'white';
+                document.querySelector('label[for="normal"]').style.transform = 'translateY(-2px)';
+                document.querySelector('label[for="normal"]').style.boxShadow = '0 5px 15px rgba(45, 52, 54, 0.3)';
+            }
+        }
+
+        // ฟังก์ชันแสดง Success Modal
+        function showSuccessModal(fullName, phone, ticketType, quantity, totalPrice) {
+            const successDetails = document.getElementById('successDetails');
+            successDetails.innerHTML = `
+                <div class="detail-row">
+                    <span class="detail-label">ชื่อผู้จอง:</span>
+                    <span class="detail-value">${fullName}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">เบอร์โทร:</span>
+                    <span class="detail-value">${phone}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">ประเภทตั๋ว:</span>
+                    <span class="detail-value">${ticketType}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">จำนวน:</span>
+                    <span class="detail-value">${quantity} ใบ</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">ราคารวม:</span>
+                    <span class="detail-value">${totalPrice.toLocaleString()} บาท</span>
+                </div>
+            `;
+            
+            document.getElementById('successModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // ฟังก์ชันปิด Success Modal
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // ปิด modal เมื่อคลิกที่ overlay
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSuccessModal();
+            }
+        });
+
+        // Initialize
+        updateQuantityDisplay();
+    </script>
+</body>
+</html>
